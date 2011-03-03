@@ -73,7 +73,7 @@ end
 =end
 #FIXME code not work, temp fix
 run 'rm .gitignore'
-get "https://gist.github.com/822048.txt", ".gitignore"
+get "https://github.com/fsword/rails_templates/raw/master/resource/gitignore", ".gitignore"
 # to remain log/ tmp/ in git
 run 'touch log/.gitignore tmp/.gitignore'
 
@@ -85,6 +85,7 @@ git :commit => "-m 'Initial commit of unmodified new Rails app'"
 # Remove unneeded files
 #----------------------------------------------------------------------------
 say("removing unneeded files...", :yellow)
+
 run 'cp config/database.yml config/default.database.yml'
 run 'rm public/index.html'
 run 'rm public/favicon.ico'
@@ -100,6 +101,10 @@ run 'touch README.mkd'
 # Setup need gems
 #----------------------------------------------------------------------------
 say "setting up the Gemfile...", :yellow
+
+gem 'bouncy-castle-java'
+gem 'activerecord-jdbcsqlite3-adapter'
+gem 'rubyzip2'
 
 gem 'by_star'
 gem 'meta_where'
@@ -119,7 +124,7 @@ gem 'will_paginate'
 
 gem 'rails_config'
 
-# gem 'unicorn'
+#gem 'unicorn'
 #gem 'thin'
 
 #gem 'capistrano'
@@ -165,6 +170,21 @@ if devise_flag
   gem 'devise'
 end
 
+
+# before bundle install, change sqlite3 db connection to jdbc-sqlite3
+database_configs = File.readlines 'config/database.yml'
+File.open('config/database.yml','w'){|f|
+  database_configs.each{|line|
+    f.write(line.sub /adapter:\ sqlite3/, 'adapter: jdbcsqlite3')
+  }
+}
+
+gem_configs = File.readlines 'Gemfile'
+File.open('Gemfile','w'){|f|
+  gem_configs.each{|line|
+    f.write(line.sub /gem\ 'sqlite3'/, "gem 'jdbc-sqlite3'")
+  }
+}
 
 # Install gems
 say("installing gems (takes a few minutes!)...", :yellow)

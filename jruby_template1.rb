@@ -119,8 +119,8 @@ gem 'will_paginate'
 
 gem 'rails_config'
 
-gem 'unicorn'
-gem 'thin'
+# gem 'unicorn'
+#gem 'thin'
 
 #gem 'capistrano'
 

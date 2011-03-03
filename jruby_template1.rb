@@ -134,6 +134,7 @@ gem 'bullet', :group => 'development'
 
 gem 'metrical', :group => 'development'
 
+gem 'jruby-openssl'
 #gem 'backup'
 
 #----------------------------------------------------------------------------

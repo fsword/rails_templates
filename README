@@ -1,2 +1,3 @@
 ruby_template1.rb: 来源是 https://gist.github.com/777670.txt 版权属于该作者
+jruby_template0.rb: 为jruby on windows的环境而准备
 jruby_template1.rb: 是基于 ruby_tempalte1.rb 修改而成，主要是结合jruby环境去掉了一些不需要的插件，并更换了数据库驱动

@@ -4,12 +4,26 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 say "setting up the Gemfile...", :yellow
 
-run 'del public/javascripts/rails.js'
-run 'copy config/database.yml config/default.database.yml'
-run 'del public/index.html'
-run 'del public/favicon.ico'
-run 'del public/images/rails.png'
-run 'del README'
+run 'rm .gitignore'
+get "https://github.com/fsword/rails_templates/raw/master/resource/gitignore", ".gitignore"
+run 'rm public/javascripts/rails.js'
+run 'cp config/database.yml config/default.database.yml'
+run 'rm public/index.html'
+run 'rm public/favicon.ico'
+run 'rm public/images/rails.png'
+run 'rm README'
+
+say("setting up Gemfile for BDD test...", :yellow)
+
+#gem 'ZenTest', :group => ['development','test']
+gem 'rspec-rails', :group => ['development','test']
+gem 'cucumber-rails', :group => ['development','test']
+gem 'capybara', :group => ['development','test']
+gem 'factory_girl_rails', :group => ['development','test']
+gem 'database_cleaner', :group => ['development','test']
+gem "shoulda", :group => ['development','test']
+gem 'spork', :group => ['development','test']
+gem 'launchy', :group => ['development','test']
 
 say("replacing Prototype with jQuery", :yellow)
 say("setting up Gemfile for jQuery...", :yellow)
@@ -40,6 +54,17 @@ say("installing gems (takes a few minutes!)...", :yellow)
 run 'bundle install'
 
 
+say("replacing Test::Unit with BDD", :yellow)
+run 'jruby -S rails generate rspec:install'
+say("install cucumber", :yellow)
+generate("cucumber:install")
+
+run 'jruby -S rails generate jquery:install --ui'
+
+generate("devise:install")
+generate("devise", model_name)
+generate("devise:views")
+
 application do
   "
     require 'openssl'
@@ -54,20 +79,15 @@ application do
   "
 end
 
-run 'jruby -S rails generate jquery:install --ui'
+rake 'db:migrate'
 
 get "https://github.com/svenfuchs/rails-i18n/raw/master/rails/locale/zh-CN.yml", "config/locales/zh-CN.yml"
 
 url_pre="https://github.com/fsword/rails_templates/raw/master/resource/locale"
-
 get "#{url_pre}/devise.zh-CN.yml", "config/locales/devise.zh-CN.yml"
-
 get "#{url_pre}/responders.zh-CN.yml", "config/locales/responders.zh-CN.yml"
-
 get "#{url_pre}/simple_form.zh-CN.yml", "config/locales/simple_form.zh-CN.yml"
-
 get "#{url_pre}/model.zh-CN.yml", "config/locales/model.zh-CN.yml"
-
 
 generate(:controller, "home index")
 route "root :to => 'home#index'"

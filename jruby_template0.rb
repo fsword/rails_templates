@@ -25,6 +25,9 @@ gem "shoulda", :group => ['development','test']
 gem 'spork', :group => ['development','test']
 gem 'launchy', :group => ['development','test']
 
+gem 'inherited_resources_views'
+gem 'inherited_resources'
+
 say("replacing Prototype with jQuery", :yellow)
 say("setting up Gemfile for jQuery...", :yellow)
 gem 'jquery-rails'
@@ -35,35 +38,16 @@ gem 'devise'
 gem 'jruby-openssl'
 gem 'activerecord-jdbcsqlite3-adapter'
 
-database_configs = File.readlines 'config/database.yml'
-File.open('config/database.yml','w'){|f|
-  database_configs.each{|line|
-    f.write(line.sub /adapter:\ sqlite3/, 'adapter: jdbcsqlite3')
-  }
-}
+gsub_file 'config/database.yml', /adapter:\ sqlite3/, "adapter: jdbcsqlite3" 
 
-gem_configs = File.readlines 'Gemfile'
-File.open('Gemfile','w'){|f|
-  gem_configs.each{|line|
-    f.write(line.sub /gem\ 'sqlite3'/, "gem 'jdbc-sqlite3'")
-  }
-}
+gsub_file 'Gemfile', /gem\ 'sqlite3'/, "gem 'jdbc-sqlite3'" 
+
+gsub_file 'config/application.rb', /(config.action_view.javascript_expansions.*)/,
+        "config.action_view.javascript_expansions[:defaults] = %w(jquery rails)" 
 
 # Install gems
 say("installing gems (takes a few minutes!)...", :yellow)
 run 'bundle install'
-
-
-say("replacing Test::Unit with BDD", :yellow)
-run 'jruby -S rails generate rspec:install'
-say("install cucumber", :yellow)
-generate("cucumber:install")
-
-run 'jruby -S rails generate jquery:install --ui'
-
-generate("devise:install")
-generate("devise", model_name)
-generate("devise:views")
 
 application do
   "
@@ -72,14 +56,12 @@ application do
     config.time_zone = 'Beijing'
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]
     config.i18n.default_locale = :'zh-CN'
-    config.action_view.javascript_expansions[:defaults] = %w(jquery rails)
     config.after_initialize do
       config.active_record.default_timezone = :local
     end
   "
 end
 
-rake 'db:migrate'
 
 get "https://github.com/svenfuchs/rails-i18n/raw/master/rails/locale/zh-CN.yml", "config/locales/zh-CN.yml"
 
@@ -94,3 +76,19 @@ route "root :to => 'home#index'"
 
 
 say("Done setting up your Rails app.", :yellow)
+
+#jruby -S rails generate jquery:install --ui
+
+#jruby -S rails generate devise:install
+#jruby -S rails generate devise user
+#jruby -S rails generate devise:views
+
+## say("replacing Test::Unit with BDD", :yellow)
+#jruby -S rails generate rspec:install
+## say("install cucumber", :yellow)
+#jruby -S rails generate cucumber:install
+
+#say "install inherited_resources_views", :yellow
+#jruby -S rails generate inherited_resources_views
+
+#jruby -S rake db:migrate

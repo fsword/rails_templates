@@ -4,11 +4,22 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 say "setting up the Gemfile...", :yellow
 
-gem 'activerecord-jdbcsqlite3-adapter'
-gem 'jruby-openssl'
+run 'del public/javascripts/rails.js'
+run 'copy config/database.yml config/default.database.yml'
+run 'del public/index.html'
+run 'del public/favicon.ico'
+run 'del public/images/rails.png'
+run 'del README'
 
+say("replacing Prototype with jQuery", :yellow)
 say("setting up Gemfile for jQuery...", :yellow)
 gem 'jquery-rails'
+
+say("setting up Gemfile for devise...", :yellow)
+gem 'devise'
+
+gem 'jruby-openssl'
+gem 'activerecord-jdbcsqlite3-adapter'
 
 database_configs = File.readlines 'config/database.yml'
 File.open('config/database.yml','w'){|f|
@@ -28,9 +39,6 @@ File.open('Gemfile','w'){|f|
 say("installing gems (takes a few minutes!)...", :yellow)
 run 'bundle install'
 
-run 'del public/javascripts/rails.js'
-say("replacing Prototype with jQuery", :yellow)
-# "--ui" enables optional jQuery UI
 
 application do
   "
@@ -47,4 +55,22 @@ application do
 end
 
 run 'jruby -S rails generate jquery:install --ui'
+
+get "https://github.com/svenfuchs/rails-i18n/raw/master/rails/locale/zh-CN.yml", "config/locales/zh-CN.yml"
+
+url_pre="https://github.com/fsword/rails_templates/raw/master/resource/locale"
+
+get "#{url_pre}/devise.zh-CN.yml", "config/locales/devise.zh-CN.yml"
+
+get "#{url_pre}/responders.zh-CN.yml", "config/locales/responders.zh-CN.yml"
+
+get "#{url_pre}/simple_form.zh-CN.yml", "config/locales/simple_form.zh-CN.yml"
+
+get "#{url_pre}/model.zh-CN.yml", "config/locales/model.zh-CN.yml"
+
+
+generate(:controller, "home index")
+route "root :to => 'home#index'"
+
+
 say("Done setting up your Rails app.", :yellow)

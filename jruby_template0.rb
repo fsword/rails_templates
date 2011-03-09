@@ -1,8 +1,11 @@
 require "thor/shell"
+require 'openssl'
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 say "setting up the Gemfile...", :yellow
 
 gem 'activerecord-jdbcsqlite3-adapter'
+gem 'jruby-openssl'
 
 say("setting up Gemfile for jQuery...", :yellow)
 gem 'jquery-rails'
@@ -25,13 +28,14 @@ File.open('Gemfile','w'){|f|
 say("installing gems (takes a few minutes!)...", :yellow)
 run 'bundle install'
 
-run 'rm public/javascripts/rails.js'
+run 'del public/javascripts/rails.js'
 say("replacing Prototype with jQuery", :yellow)
 # "--ui" enables optional jQuery UI
-run 'rails generate jquery:install --ui'
 
 application do
   "
+    require 'openssl'
+    OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
     config.time_zone = 'Beijing'
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]
     config.i18n.default_locale = :'zh-CN'
@@ -42,7 +46,5 @@ application do
   "
 end
 
-#FIXME bad smoke
-run "sed -i -e '43d' config/application.rb"
-
+run 'jruby -S rails generate jquery:install --ui'
 say("Done setting up your Rails app.", :yellow)

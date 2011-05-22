@@ -1,4 +1,4 @@
 ruby_template1.rb: 来源是 https://gist.github.com/777670.txt 版权属于该作者
-jruby_template0.rb: 为jruby on windows的环境而准备
+jruby_template0.rb: 最简洁的基础模板，主要处理 sqlite3 到 jdbcsqlite3 驱动的变化
 jruby_template1.rb: 是基于 ruby_tempalte1.rb 修改而成，主要是结合jruby环境去掉了一些不需要的插件，并更换了数据库驱动
-jruby_template_win.rb: 在windows+jruby下开发rails的模板
+jruby_template_win.rb: 在windows+jruby下开发rails的模板，基于template1文件去掉了部分在windows下有问题的插件，同时修改了 https 请求的访问代码，添加了重试若干次的功能

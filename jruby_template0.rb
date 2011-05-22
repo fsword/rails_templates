@@ -7,7 +7,7 @@ say "setting up the Gemfile...", :yellow
 run 'cp config/database.yml config/default.database.yml'
 gem 'jruby-openssl'
 gem 'activerecord-jdbcsqlite3-adapter'
-#更改jdbc驱动（gem命令只能添加gem，但是不能去掉缺省的gem）
+#change jdbc driver
 gsub_file 'Gemfile', /gem\ 'sqlite3'/, "gem 'jdbc-sqlite3'"  
 gsub_file 'config/database.yml', /adapter:\ +sqlite3/, "adapter: jdbcsqlite3" 
 

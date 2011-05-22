@@ -2,20 +2,36 @@ require "thor/shell"
 require 'openssl'
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
+# define a try_to method for https request
+def try_to n
+  if block_given?
+    n.times{|i|
+      begin
+        return yield
+      rescue
+        p "failed #{i} times"
+      end
+    }
+    nil
+  end
+end
+
+def try_get url, file=nil
+  try_to(3)do get url,file end
+end
+
 say "setting up the Gemfile...", :yellow
 
-run 'rm .gitignore'
-get "https://github.com/fsword/rails_templates/raw/master/resource/gitignore", ".gitignore"
-run 'rm public/javascripts/rails.js'
-run 'cp config/database.yml config/default.database.yml'
-run 'rm public/index.html'
-run 'rm public/favicon.ico'
-run 'rm public/images/rails.png'
-run 'rm README'
+remove_file '.gitignore'
+try_get "https://github.com/fsword/rails_templates/raw/master/resource/gitignore", ".gitignore"
+remove_file 'public/javascripts/rails.js'
+remove_file 'public/index.html'
+remove_file 'public/favicon.ico'
+remove_file 'public/images/rails.png'
+remove_file 'README'
 
 say("setting up Gemfile for BDD test...", :yellow)
 
-#gem 'ZenTest', :group => ['development','test']
 gem 'rspec-rails', :group => ['development','test']
 gem 'cucumber-rails', :group => ['development','test']
 gem 'capybara', :group => ['development','test']
@@ -63,13 +79,13 @@ application do
 end
 
 
-get "https://github.com/svenfuchs/rails-i18n/raw/master/rails/locale/zh-CN.yml", "config/locales/zh-CN.yml"
+try_get "https://github.com/svenfuchs/rails-i18n/raw/master/rails/locale/zh-CN.yml", "config/locales/zh-CN.yml"
 
 url_pre="https://github.com/fsword/rails_templates/raw/master/resource/locale"
-get "#{url_pre}/devise.zh-CN.yml", "config/locales/devise.zh-CN.yml"
-get "#{url_pre}/responders.zh-CN.yml", "config/locales/responders.zh-CN.yml"
-get "#{url_pre}/simple_form.zh-CN.yml", "config/locales/simple_form.zh-CN.yml"
-get "#{url_pre}/model.zh-CN.yml", "config/locales/model.zh-CN.yml"
+try_get "#{url_pre}/devise.zh-CN.yml", "config/locales/devise.zh-CN.yml"
+try_get "#{url_pre}/responders.zh-CN.yml", "config/locales/responders.zh-CN.yml"
+try_get "#{url_pre}/simple_form.zh-CN.yml", "config/locales/simple_form.zh-CN.yml"
+try_get "#{url_pre}/model.zh-CN.yml", "config/locales/model.zh-CN.yml"
 
 generate(:controller, "home index")
 route "root :to => 'home#index'"
@@ -77,18 +93,21 @@ route "root :to => 'home#index'"
 
 say("Done setting up your Rails app.", :yellow)
 
-#jruby -S rails generate jquery:install --ui
+=begin
+jruby -S rails generate jquery:install --ui
 
-#jruby -S rails generate devise:install
-#jruby -S rails generate devise user
-#jruby -S rails generate devise:views
+jruby -S rails generate devise:install
+jruby -S rails generate devise user
+jruby -S rails generate devise:views
 
-## say("replacing Test::Unit with BDD", :yellow)
-#jruby -S rails generate rspec:install
-## say("install cucumber", :yellow)
-#jruby -S rails generate cucumber:install
+say("replacing Test::Unit with BDD", :yellow)
+jruby -S rails generate rspec:install
+ say("install cucumber", :yellow)
+jruby -S rails generate cucumber:install
 
-#say "install inherited_resources_views", :yellow
-#jruby -S rails generate inherited_resources_views
+say "install inherited_resources_views", :yellow
+jruby -S rails generate inherited_resources_views
 
-#jruby -S rake db:migrate
+jruby -S rake db:migrate
+=end
+

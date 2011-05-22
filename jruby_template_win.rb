@@ -9,7 +9,8 @@ def try_to n
       begin
         return yield
       rescue
-        p "failed #{i} times"
+        p "failed #{i} times, I will sleep 1 second"
+        sleep 1
       end
     }
     nil

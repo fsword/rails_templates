@@ -29,3 +29,5 @@ application do
 end
 
 say("Done setting up your Rails app.", :yellow)
+
+plugin 'java_side', :git => 'git@github.com:fsword/java_side.git'

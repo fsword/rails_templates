@@ -6,6 +6,7 @@ say "setting up the Gemfile...", :yellow
 
 run 'cp config/database.yml config/default.database.yml'
 gem 'jruby-openssl'
+gem 'warbler'
 gem 'activerecord-jdbcsqlite3-adapter'
 #change jdbc driver
 gsub_file 'Gemfile', /gem\ 'sqlite3'/, "gem 'jdbc-sqlite3'"  
@@ -30,4 +31,4 @@ end
 
 say("Done setting up your Rails app.", :yellow)
 
-plugin 'java_side', :git => 'git@github.com:fsword/java_side.git'
+plugin 'java_side', :svn => 'svn://localhost/java_side'

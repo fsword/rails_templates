@@ -31,4 +31,12 @@ end
 
 say("Done setting up your Rails app.", :yellow)
 
+# monkey patch: rake 0.9.0 bugfix
+gsub_file 'Rakefile', /require\ 'rake'/, %Q[require 'rake'
+
+class Rails::Application
+  include Rake::DSL if defined?(Rake::DSL)
+end]
+
+
 plugin 'java_side', :git => 'git@github.com:fsword/java_side.git'

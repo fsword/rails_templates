@@ -8,6 +8,9 @@ run 'cp config/database.yml config/default.database.yml'
 gem 'jruby-openssl'
 gem 'warbler'
 gem 'activerecord-jdbcsqlite3-adapter'
+gem 'inherited_resources_views'
+gem 'inherited_resources'
+
 #change jdbc driver
 gsub_file 'Gemfile', /gem\ 'sqlite3'/, "gem 'jdbc-sqlite3'"  
 gsub_file 'config/database.yml', /adapter:\ +sqlite3/, "adapter: jdbcsqlite3" 
@@ -19,7 +22,7 @@ run 'bundle install'
 application do
   "
     require 'openssl'
-    OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+#OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
     config.time_zone = 'Beijing'
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]
     config.i18n.default_locale = :'zh-CN'
@@ -38,5 +41,8 @@ class Rails::Application
   include Rake::DSL if defined?(Rake::DSL)
 end]
 
+say "install inherited_resources_views", :yellow
+generate "inherited_resources_views"
 
+say "add java_side plugin", :yellow
 plugin 'java_side', :git => 'git@github.com:fsword/java_side.git'

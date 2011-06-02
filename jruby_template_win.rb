@@ -77,6 +77,7 @@ application do
     config.after_initialize do
       config.active_record.default_timezone = :local
     end
+    config.spring=true
   "
 end
 

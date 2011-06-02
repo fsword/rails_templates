@@ -47,4 +47,4 @@ say "install inherited_resources_views", :yellow
 generate "inherited_resources_views"
 
 say "add java_side plugin", :yellow
-plugin 'java_side', :git => 'git@github.com:fsword/java_side.git'
+plugin 'java_side', :git => 'https://github.com/fsword/java_side.git'

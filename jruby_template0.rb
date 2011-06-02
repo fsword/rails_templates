@@ -5,6 +5,8 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 say "setting up the Gemfile...", :yellow
 
 run 'cp config/database.yml config/default.database.yml'
+gem 'arel', '2.0.9'
+gem 'rspec-rails', '2.6.0.rc6', :group => ['development','test']
 gem 'jruby-openssl'
 gem 'warbler'
 gem 'activerecord-jdbcsqlite3-adapter'

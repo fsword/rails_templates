@@ -56,13 +56,13 @@ gem 'jquery-rails'
 say("setting up Gemfile for devise...", :yellow)
 gem 'devise'
 
+gsub_file 'Gemfile', /gem\ 'sqlite3'/, "" 
+
 gem 'jruby-openssl'
 gem 'jdbc-sqlite3'
 gem 'activerecord-jdbcsqlite3-adapter'
 
 gsub_file 'config/database.yml', /adapter:\ sqlite3/, "adapter: jdbcsqlite3" 
-
-gsub_file 'Gemfile', /gem\ 'sqlite3'/, "" 
 
 gsub_file 'config/application.rb', /(config.action_view.javascript_expansions.*)/,
         "config.action_view.javascript_expansions[:defaults] = %w(jquery rails)" 

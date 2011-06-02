@@ -33,7 +33,8 @@ remove_file 'README'
 
 say("setting up Gemfile for BDD test...", :yellow)
 
-gem 'rspec-rails', :group => ['development','test']
+gem 'arel', '2.0.9'
+gem 'rspec-rails', '2.6.0.rc6', :group => ['development','test']
 gem 'cucumber-rails', :group => ['development','test']
 gem 'capybara', :group => ['development','test']
 gem 'factory_girl_rails', :group => ['development','test']
@@ -45,6 +46,8 @@ gem 'launchy', :group => ['development','test']
 gem 'inherited_resources_views'
 gem 'inherited_resources'
 
+gem 'warbler'
+
 say("replacing Prototype with jQuery", :yellow)
 say("setting up Gemfile for jQuery...", :yellow)
 gem 'jquery-rails'
@@ -53,18 +56,15 @@ say("setting up Gemfile for devise...", :yellow)
 gem 'devise'
 
 gem 'jruby-openssl'
+gem 'jdbc-sqlite3'
 gem 'activerecord-jdbcsqlite3-adapter'
 
 gsub_file 'config/database.yml', /adapter:\ sqlite3/, "adapter: jdbcsqlite3" 
 
-gsub_file 'Gemfile', /gem\ 'sqlite3'/, "gem 'jdbc-sqlite3'" 
+gsub_file 'Gemfile', /gem\ 'sqlite3'/, "" 
 
 gsub_file 'config/application.rb', /(config.action_view.javascript_expansions.*)/,
         "config.action_view.javascript_expansions[:defaults] = %w(jquery rails)" 
-
-# Install gems
-say("installing gems (takes a few minutes!)...", :yellow)
-run 'bundle install'
 
 application do
   "
@@ -79,20 +79,44 @@ application do
   "
 end
 
+say('monkey patch: rake 0.9.0 bugfix')
+gsub_file 'Rakefile', /require\ 'rake'/, %Q[require 'rake'
+
+class Rails::Application
+  include Rake::DSL if defined?(Rake::DSL)
+end]
 
 try_get "https://github.com/svenfuchs/rails-i18n/raw/master/rails/locale/zh-CN.yml", "config/locales/zh-CN.yml"
-
 url_pre="https://github.com/fsword/rails_templates/raw/master/resource/locale"
 try_get "#{url_pre}/devise.zh-CN.yml", "config/locales/devise.zh-CN.yml"
 try_get "#{url_pre}/responders.zh-CN.yml", "config/locales/responders.zh-CN.yml"
 try_get "#{url_pre}/simple_form.zh-CN.yml", "config/locales/simple_form.zh-CN.yml"
 try_get "#{url_pre}/model.zh-CN.yml", "config/locales/model.zh-CN.yml"
 
+# Install gems
+say("installing gems (takes a few minutes!)...", :yellow)
+run 'bundle install'
+
 generate(:controller, "home index")
 route "root :to => 'home#index'"
 
-
 say("Done setting up your Rails app.", :yellow)
+
+say "install inherited_resources_views", :yellow
+generate "inherited_resources_views"
+
+say "install jquery", :yellow
+generate "jquery:install --ui"
+
+say "install devise", :yellow
+generate "devise:install"
+generate "devise:user"
+generate "devise:views"
+
+say("replacing Test::Unit with BDD", :yellow)
+generate("rspec:install")
+say("install cucumber", :yellow)
+generate('cucumber:install')
 
 =begin
 jruby -S rails generate jquery:install --ui
@@ -111,4 +135,8 @@ jruby -S rails generate inherited_resources_views
 
 jruby -S rake db:migrate
 =end
+say "add java_side plugin", :yellow
+plugin 'java_side', :git => 'https://github.com/fsword/java_side.git'
 
+say "add db:migrate", :yellow
+rake('db:migrate')

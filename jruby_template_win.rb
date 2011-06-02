@@ -49,6 +49,7 @@ gem 'inherited_resources'
 gem 'warbler'
 
 say("replacing Prototype with jQuery", :yellow)
+remove_file 'public/javascripts/rails.js' if File.exist? 'public/javascripts/rails.js'
 say("setting up Gemfile for jQuery...", :yellow)
 gem 'jquery-rails'
 

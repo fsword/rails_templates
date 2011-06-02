@@ -5,7 +5,9 @@ OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 say "setting up the Gemfile...", :yellow
 
 run 'cp config/database.yml config/default.database.yml'
+
 gem 'arel', '2.0.9'
+gem 'jdbc-sqlite3'
 gem 'rspec-rails', '2.6.0.rc6', :group => ['development','test']
 gem 'jruby-openssl'
 gem 'warbler'
@@ -14,7 +16,7 @@ gem 'inherited_resources_views'
 gem 'inherited_resources'
 
 #change jdbc driver
-gsub_file 'Gemfile', /gem\ 'sqlite3'/, "gem 'jdbc-sqlite3'"  
+gsub_file 'Gemfile', /gem\ 'sqlite3'/, ""  
 gsub_file 'config/database.yml', /adapter:\ +sqlite3/, "adapter: jdbcsqlite3" 
 
 # Install gems

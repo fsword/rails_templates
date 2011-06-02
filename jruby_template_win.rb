@@ -57,9 +57,9 @@ say("setting up Gemfile for devise...", :yellow)
 gem 'devise'
 
 gsub_file 'Gemfile', /gem\ 'sqlite3'/, "" 
+gem 'jdbc-sqlite3'
 
 gem 'jruby-openssl'
-gem 'jdbc-sqlite3'
 gem 'activerecord-jdbcsqlite3-adapter'
 
 gsub_file 'config/database.yml', /adapter:\ sqlite3/, "adapter: jdbcsqlite3" 
